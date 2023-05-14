@@ -28,4 +28,12 @@ There are also four special-purpose registers:
 * %eip
 * %eflags
 
+The main datatypes in x86 32-bit are:
+- .byte: 8 bytes (maybe an 8 bit integer)
+- .int: 16 bit integer
+- .long: 32 bit integer
+- .ascii: entering byte arrays as C-strings (e.g. `.ascii "Hello\0"`. Note the \0 does appear!)
 
+Comparisons (or rather the conditiion instructions that go after them) are
+generally written in a backward order in x86 relative to any normal language,
+e.g. the "le" condition is met when the *right* side is <= the *left* side.
