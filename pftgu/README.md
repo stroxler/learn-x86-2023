@@ -11,3 +11,21 @@ it will be a bit dated but that's okay because:
   purposes it might be more useful anyway
 
 I can learn basic 64-bit from "Low Level Programming" later.
+
+# Notes from Chapter 3
+
+There are 7 general-purpose registers in 32-bit x86:
+* %eax
+* %ebx
+* %ecx
+* %edx
+* %edi
+* %esi
+
+There are also four special-purpose registers:
+* %ebp
+* %esp
+* %eip
+* %eflags
+
+
