@@ -23,7 +23,9 @@ Then, we need to create our image by:
 mkdir -p ~/.qemu-data
 
 # Downloading an .iso boot image
-curl https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.0-x86_64.iso -o ~/.qemu-data/alpine-virt-3.18.0-x86_64.iso
+curl \
+  https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.0-x86_64.iso \
+  -o ~/.qemu-data/alpine-virt-3.18.0-x86_64.iso
 
 # Creating a disk image for qemu
 qemu-img create -f qcow2 ~/.qemu-data/alpine.qcow2 8G
