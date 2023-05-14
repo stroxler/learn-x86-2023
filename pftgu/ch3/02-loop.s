@@ -51,7 +51,3 @@ jmp start_loop
 loop_exit:
 movl $1, %eax
 int $0x80
-
-movl $1, %eax
-movl $42, %ebx
-int $0x80
