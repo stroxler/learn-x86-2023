@@ -96,4 +96,38 @@ ssh root@localhost -p 10022
 ```
 
 
+# Other things to learn about
 
+- I'd like to understand `podman` better, I think it can be used to
+  run both vms and containers; in the latter capacity it's supposed
+  to be a mostly drop-in replacement for `docker`.
+- I want to try using a nixos image instead of alpine.
+
+
+## Some resources that may help with trying more setups
+
+An IBM article about running qemu with podman. The flags didn't work
+for me, but I bet if I edit the `~/.config/containers/podman/machine/qemu`
+json file with an understanding of the working alpine setup above it
+would work:
+https://developer.ibm.com/tutorials/running-x86-64-containers-mac-silicon-m1/
+
+
+Some user guides to NixOS, which is trickier to install for beginners:
+https://github.com/kstenerud/nixos-beginners-handbook/blob/main/installing-vm.md
+https://gist.github.com/Vincibean/baf1b76ca5147449a1a479b5fcc9a222
+The official guide is here, it assumes a bit more familiarity with
+disk partitioning than I have:
+https://nixos.org/manual/nixos/stable/
+Once I get nixos installed, I suspect this will be handy:
+https://github.com/dustinlyons/nixos-config
+
+Quite a few articles suggest learning a frontend for qemu. Podman is a
+kind of frontend (but a command-line one); The two main MacOS
+frontends are
+  - UTM, the most widely recommended: https://mac.getutm.app/
+  - Lima: https://github.com/lima-vm/lima
+I suspect I don't need these today, but if I ever were to, say, run
+a class requiring linux (especially linux on a specific architecture)
+then it might be really handy. They seem to offer something similar to
+a virtualbox GUI experience.
