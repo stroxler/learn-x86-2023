@@ -6,19 +6,33 @@
 # instructions):
 #
 # A `call` instruction will automatically do the following:
-# - 
+# - push the next instruction location (return instruction)
+# - jump to the label given
 #
 # A `ret` instruction will automatically do the following
-# - pop and m
+# - pop (which should give the instruction pushed by `call`)
+# - jump to to that instruction location (i.e. set %eip)
+#
+# Just to note: %esp always points to the next *available* spot on the stack,
+# rather than the last added thing. One way to remember this is that because
+# you can push different-size data (e.g. 16- vs 32- vs 64-bit), pointing at
+# the last-added thing doesn't really make sense. So whenever you address
+# a local, you need some (positive) offset from %esp.
+#
+# The %ebp register generally holds the value of %esp as of the current
+# function start. It's more common to use offsets from %ebp (which will
+# always be the same in a given function body, assuming your code is 
+# bug-free) than %esp. In that case, arguments will have positive offsets
+# because the stack "grows down" and locals will have negative offsets.
 #
 # Our callsite responsibilities as a user of C calling conventions are:
 # - ensure args are on the stack in reverse order
 # - ensure that we have saved all register values we'll need later
 # - eventually remove args from the stack (they are still there
-#   after the call completes and we need to be able to use them
-#   if, for example, we passed args by reference).
+#   after the call completes - this is handy if, for example, they were
+#   passed by reference).
 #
-# Our caller responsibilities as a user of C conventions are:
+# Our callee responsibilities as a user of C conventions are:
 # - push %ebp at the very start of our function; this is our caller's
 #   stack frame base, and if we don't store it there will be no recovery!
 # - copy the old %esp to %ebp (because the stack at function start is our
@@ -28,9 +42,9 @@
 #   - this applies to any single-register result
 #   - I'm unsure how it applies if we return a compound value like a struct
 #     (obviously a pointer is just one register, but an actual struct isn't)
-# - before returning:
-#   - restore %esp, wiping any locals (set it to our %ebp)
-#   - restore %ebp by popping it
+# - before returning, in this order:
+#   - restore %esp to value just after we pushed %ebp via `movl %ebp, %esp`
+#   - restore %ebp to the caller stack frame by popping (this also increments esp)
 #
 # As a rule we also generally want to allocate room for locals (by subtracting
 # from esp) in the header, but that's not required - we could choose to manage
