@@ -33,8 +33,8 @@ qemu-img create -f qcow2 ~/.qemu-data/alpine.qcow2 8G
 # Booting from the iso pointed at the disk, which initializes the disk
 qemu-system-x86_64 \
   -m 512 -nic user -nographic \
-  -boot d -cdrom alpine-virt-3.18.0-x86_64.iso \
-  -drive file=alpine.qcow2,media=disk
+  -boot d -cdrom $HOME/.qemu-data/alpine-virt-3.18.0-x86_64.iso \
+  -drive file=$HOME/.qemu-data/alpine.qcow2,media=disk
 
 # ^ In this boot session we have to install alpine by:
 #
@@ -44,14 +44,15 @@ qemu-system-x86_64 \
 # - set the password for root (it doesn't need to be secure)
 # - use mirror 18 (cmu)
 # - set up a user stroxler
-# - install the system as a 'sys' image to `sda`
+# - copy the ssh key for stroxler from my laptop
+# - install the system to `sda` (that's our qcow2 file) as a `sys` image
 ```
 
 Next, verify that we can boot normally by running:
 ```
 qemu-system-x86_64 \
   -m 512 -nic user -nographic \
-  -drive file=alpine.qcow2,media=disk \
+  -drive file=$HOME/.qemu-data/alpine.qcow2,media=disk \
   -net nic,model=virtio \
   -net user,hostfwd=tcp::10022-:22
 ```
@@ -66,36 +67,36 @@ su stroxler
 sh <(curl -L https://nixos.org/nix/install) --no-daemon
 ```
 
-and also make sure that ssh works by running adding these lines
-to `/etc/ssh/sshd_config` (use `vi`, the only editor in alpine):
+
+Now test logging in:
+```
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" localhost -p 10022
+```
+This should work without a password!
+
+If ^ fails you *may* need to do work to make sure ssh works (I seemed to need
+to to my first time, the second it worked right away) by adding these lines to
+`/etc/ssh/sshd_config` (use `vi`, the only editor in alpine):
 ```bash
 PermitRootLogin yes
 PermitEmptyPasswords yes
 ```
 and restart with `/etc/init.d/sshd restart`.
 
-Then, still as `stroxler`, run
-```
-mkdir ~/.ssh
-echo '<key>' > ~/.ssh/authorized_keys
-```
-where `<key>` is the contents of your host machine's
-`~/.ssh/id_rsa.pub`.
-
-If the `stroxler` user had issues, you may need to modify
-`/etc/shadow`; in my case I accidentally created a locked user
-with a password of `!` which I had to change to `*`.
-
-Now test logging in:
-```
-ssh localhost -p 10022
-```
-This should work without a password!
 
 If you need to debug you can log in with a password as root:
 ```
 ssh root@localhost -p 10022
 ```
+
+I then used nix to install the basics for my own intro-to-x86 programming:
+```
+nix-env -iA \
+    nixpkgs.gcc \
+    nixpkgs.nvim
+```
+If you want to scp data over (in particular, if you want to use git from
+inside the vm) you can scp it; you'll need the ssh incantation from above.
 
 
 # Other things to learn about
